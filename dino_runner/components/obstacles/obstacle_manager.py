@@ -13,19 +13,24 @@ class ObstaclesManager:
 
     def update(self, game):
         if len(self.obstacles) == 0:
-            if random.randint(0,2) == 0:
+            random_type = random.randint(0,2)
+            if random_type == 0:
                 self.obstacles.append(SmallCactus(SMALL_CACTUS))
-            elif random.randint(0,2) == 1:
+            elif random_type == 1:
                 self.obstacles.append(LargeCactus(LARGE_CACTUS))
-            elif random.randint(0,2) == 2:
+            elif random_type == 2:
                 self.obstacles.append(Bird(BIRD))
             
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
             if game.player.dino_rect.colliderect(obstacle.rect):
                 game.player = False 
+                game.death_count += 1
                 break 
 
     def draw(self, screen):
         for obstacle in self.obstacles:
             obstacle.draw(screen)
+
+    def reset_obstacles(self):
+        self.obstacles = []

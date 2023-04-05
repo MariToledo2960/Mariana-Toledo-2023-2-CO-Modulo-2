@@ -9,12 +9,11 @@ class Bird(Obstacle):
         super().__init__(image, self.type)
         self.rect.y = random.randint(50,300)
         self.bird_index = 0
-        self.image = BIRD
     
     def fly(self, screen):
         if self.bird_index > 9:
             self.bird_index = 0
-        screen.blit(self.image[self.index // 5], self.rect)
+        screen.blit(BIRD[self.bird_index // 5], self.rect)
         self.bird_index += 1
         
         
