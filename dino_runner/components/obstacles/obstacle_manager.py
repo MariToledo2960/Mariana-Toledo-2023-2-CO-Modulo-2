@@ -4,7 +4,7 @@ from dino_runner.components import obstacles
 from dino_runner.components.obstacles.cactus import SmallCactus, LargeCactus
 from dino_runner.components.obstacles.bird import Bird 
 from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD
-
+from dino_runner.utils.constants import SHIELD_TYPE
 
 class ObstaclesManager:
     def __init__(self):
@@ -24,9 +24,14 @@ class ObstaclesManager:
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
             if game.player.dino_rect.colliderect(obstacle.rect):
-                game.playing = False 
-                game.death_count += 1
-                break 
+                if game.player.type != SHIELD_TYPE:
+                    game.playing = False 
+                    game.death_count += 1
+                    break
+                else:
+                    self.obstacle.remove(obstacle)
+                
+                
 
     def draw(self, screen):
         for obstacle in self.obstacles:
