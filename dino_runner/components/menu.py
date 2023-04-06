@@ -32,6 +32,9 @@ class Menu():
                 game.run()
 
     def update_message(self, message):
-        self.text = self.font.rander(message, True, (0,0,0))
+        self.text = self.font.render(message, True, (0,0,0))
         self.text_rect = self.text.get_rect()
         self.text_rect.center = (self.half_screen_width,self.half_screen_height)
+        
+    
+

@@ -6,6 +6,10 @@ from dino_runner.components.dinosaur import Dinosour
 
 class Game:
     GAME_SPEED = 20
+    POS_SHOW_MENU_HEIGHT = (SCREEN_HEIGHT // 2) - 140
+    POS_SHOW_MENU_WIDTH = (SCREEN_WIDTH // 2) - 50
+    
+   
     def __init__(self):
         pygame.init()
         pygame.display.set_caption(TITLE)
@@ -18,21 +22,26 @@ class Game:
         self.y_pos_bg = 380
         self.player = Dinosour()
         self.obstacle_manager = ObstaclesManager()
-        self.menu = Menu(self.screen, "press any key to start...")
+        self.menu = Menu(self.screen, "Press any key to start...")
         self.running = False
         self.score = 0
         self.death_count = 0
+        self.max_score = 0
+      
 
     def run(self):
         # Game loop: events - update - draw
         self.playing = True
-        self.obstacle_manager.reset_obstacles()
-        self.game_speed = self.GAME_SPEED
-        self.score = 0
+        self.restart()
         while self.playing:
             self.events()
             self.update()
             self.draw()
+    
+    def restart(self):
+        self.obstacle_manager.reset_obstacles()
+        self.game_speed = self.GAME_SPEED
+        self.score = 0
     
     def execute(self):
         self.running = True
@@ -60,6 +69,7 @@ class Game:
         self.player.draw (self.screen)
         self.obstacle_manager.draw(self.screen)
         self.draw_score()
+        self.draw_max_score()
         pygame.display.update()
         pygame.display.flip()
 
@@ -74,25 +84,45 @@ class Game:
 
     def show_menu(self):
         self.menu.reset_screen_color(self.screen)
-        half_screen_widht = SCREEN_WIDTH // 2
-        half_screen_height = SCREEN_HEIGHT// 2
-        self.screen.blit(ICON, (half_screen_widht - 50, half_screen_height - 140))
+        self.screen.blit(ICON, (self.POS_SHOW_MENU_WIDTH, self.POS_SHOW_MENU_HEIGHT))
         if self.death_count == 0:
             self.menu.draw(self.screen)
         else:
-            self.menu.update_message("Dino has died :''(")
+            self.menu.update_message("Dino has died :(")
+            self.draw_score()
             self.menu.draw(self.screen)
-
+            self.menu.draw(self.screen)
+            self.draw_max_score()
+            self.menu.draw(self.screen)
+            self.draw_death()
+            self.menu.draw(self.screen)    
         self.menu.update(self)
     
     def update_score(self):
         self.score += 1 
         if self.score % 100 == 0 and self.game_speed < 500:
             self.game_speed += 5
-    
+        
+        if self.max_score < self.score:
+            self.max_score = self.score
+
     def draw_score(self):
         font = pygame.font.Font(FONT_STYLE, 30)
         text = font.render(f'score: {self.score}', True, (0,0,0))
         text_rect = text.get_rect()
         text_rect.center = (1000, 50)
+        self.screen.blit(text, text_rect)
+    
+    def draw_max_score(self): ###
+        font = pygame.font.Font(FONT_STYLE, 30)
+        text = font.render(f'Max score: {self.max_score}', True, (0,0,0))
+        text_rect = text.get_rect()
+        text_rect.center = (970, 80)
+        self.screen.blit(text, text_rect)
+    
+    def draw_death(self): ###
+        font = pygame.font.Font(FONT_STYLE, 30)
+        text = font.render(f'You died: {self.death_count}', True, (0,0,0))
+        text_rect = text.get_rect()
+        text_rect.center = (1000, 110)
         self.screen.blit(text, text_rect)
